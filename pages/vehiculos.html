@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoReg | Vehiculos</title>
+  <meta name="description" content="Listado visual de vehiculos registrados con detalles basicos y estado.">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header compact">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">AR</span>
+        <span>
+          <strong>AutoReg</strong>
+          <small>Inventario de vehiculos</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navegacion principal">
+        <a href="../index.html">Inicio</a>
+        <a href="registro.html">Registrar vehiculo</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="vehiculos.html" class="active">Vehiculos</a>
+        <a href="estados.html">Estados</a>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <section class="page-intro">
+        <span class="eyebrow">Inventario</span>
+        <h1>Listado visual de vehiculos para consultas rapidas y administracion posterior.</h1>
+        <p>Esta vista sirve como base para filtros, busqueda avanzada y acciones sobre cada registro.</p>
+      </section>
+
+      <section class="vehicle-grid">
+        <article class="card vehicle-card">
+          <div class="vehicle-head">
+            <strong>ABC-123</strong>
+            <span class="table-badge approved">Aprobado</span>
+          </div>
+          <p>Toyota Corolla 2024, color gris, propiedad de Ana Perez.</p>
+          <dl>
+            <div><dt>Tipo</dt><dd>Automovil</dd></div>
+            <div><dt>Categoria</dt><dd>Particular</dd></div>
+            <div><dt>Ultima actualizacion</dt><dd>22/05/2026</dd></div>
+          </dl>
+        </article>
+
+        <article class="card vehicle-card">
+          <div class="vehicle-head">
+            <strong>JKT-554</strong>
+            <span class="table-badge review">Revision</span>
+          </div>
+          <p>Hyundai Tucson 2023, plata, pendiente de validacion documental.</p>
+          <dl>
+            <div><dt>Tipo</dt><dd>SUV</dd></div>
+            <div><dt>Categoria</dt><dd>Flota</dd></div>
+            <div><dt>Ultima actualizacion</dt><dd>22/05/2026</dd></div>
+          </dl>
+        </article>
+
+        <article class="card vehicle-card">
+          <div class="vehicle-head">
+            <strong>PLQ-902</strong>
+            <span class="table-badge warning">Observado</span>
+          </div>
+          <p>Ford Ranger 2022, azul, requiere ajuste en revision tecnica.</p>
+          <dl>
+            <div><dt>Tipo</dt><dd>Pickup</dd></div>
+            <div><dt>Categoria</dt><dd>Comercial</dd></div>
+            <div><dt>Ultima actualizacion</dt><dd>21/05/2026</dd></div>
+          </dl>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

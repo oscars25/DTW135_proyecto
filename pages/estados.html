@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoReg | Estados</title>
+  <meta name="description" content="Vista de estados de vehiculos con indicadores de aprobacion, revision y alertas.">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header compact">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">AR</span>
+        <span>
+          <strong>AutoReg</strong>
+          <small>Control de estados</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navegacion principal">
+        <a href="../index.html">Inicio</a>
+        <a href="registro.html">Registrar vehiculo</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="vehiculos.html">Vehiculos</a>
+        <a href="estados.html" class="active">Estados</a>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <section class="page-intro">
+        <span class="eyebrow">Estados operativos</span>
+        <h1>Panel dedicado a mostrar el ciclo de vida de cada vehiculo registrado.</h1>
+        <p>Permite entender rapidamente que registros estan aprobados, en revision o con observaciones.</p>
+      </section>
+
+      <section class="status-grid">
+        <article class="card status-card status-approved">
+          <span class="status-pill">Aprobado</span>
+          <strong>892</strong>
+          <p>Vehiculos habilitados para operacion.</p>
+        </article>
+        <article class="card status-card status-review">
+          <span class="status-pill">En revision</span>
+          <strong>214</strong>
+          <p>Registros pendientes de validacion.</p>
+        </article>
+        <article class="card status-card status-warning">
+          <span class="status-pill">Observado</span>
+          <strong>134</strong>
+          <p>Casos que requieren correccion.</p>
+        </article>
+      </section>
+
+      <section class="card process-card">
+        <div class="section-head">
+          <h2>Secuencia de control</h2>
+          <span class="status-pill status-online">Flujo base</span>
+        </div>
+        <div class="process-steps">
+          <div>
+            <strong>Recepcion</strong>
+            <p>Se captura la informacion inicial del vehiculo.</p>
+          </div>
+          <div>
+            <strong>Revision</strong>
+            <p>Se valida documentacion y coincidencia de datos.</p>
+          </div>
+          <div>
+            <strong>Aprobacion</strong>
+            <p>El vehiculo queda listo para operar o listar.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

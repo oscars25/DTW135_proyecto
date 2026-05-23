@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoReg | Registro de vehiculo</title>
+  <meta name="description" content="Formulario de registro de vehiculos con campos para informacion del auto y del propietario.">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header compact">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">AR</span>
+        <span>
+          <strong>AutoReg</strong>
+          <small>Registro de vehiculos</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navegacion principal">
+        <a href="../index.html">Inicio</a>
+        <a href="registro.html" class="active">Registrar vehiculo</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="vehiculos.html">Vehiculos</a>
+        <a href="estados.html">Estados</a>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <section class="page-intro">
+        <span class="eyebrow">Alta de unidad</span>
+        <h1>Formulario de registro de vehiculos.</h1>
+        <p>Espacio para agregar información</p>
+      </section>
+
+      <section class="form-layout">
+        <form class="card form-card">
+          <div class="form-section">
+            <h2>Datos del vehiculo</h2>
+            <div class="form-grid">
+              <label>
+                Placa
+                <input type="text" placeholder="ABC-123" />
+              </label>
+              <label>
+                Marca
+                <input type="text" placeholder="Toyota" />
+              </label>
+              <label>
+                Modelo
+                <input type="text" placeholder="Corolla" />
+              </label>
+              <label>
+                Ano
+                <input type="number" placeholder="2024" />
+              </label>
+              <label>
+                Color
+                <input type="text" placeholder="Gris" />
+              </label>
+              <label>
+                Tipo
+                <select>
+                  <option>Automovil</option>
+                  <option>SUV</option>
+                  <option>Pickup</option>
+                  <option>Camioneta</option>
+                  <option>Motocicleta</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Propietario</h2>
+            <div class="form-grid">
+              <label>
+                Nombre completo
+                <input type="text" placeholder="Nombre del propietario" />
+              </label>
+              <label>
+                Documento
+                <input type="text" placeholder="ID / DNI / Cedula" />
+              </label>
+              <label>
+                Telefono
+                <input type="tel" placeholder="+00 0000 0000" />
+              </label>
+              <label>
+                Correo
+                <input type="email" placeholder="correo@dominio.com" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Estado y documentos</h2>
+            <div class="form-grid">
+              <label>
+                Estado actual
+                <select>
+                  <option>Pendiente</option>
+                  <option>En revision</option>
+                  <option>Aprobado</option>
+                  <option>Observado</option>
+                  <option>Bloqueado</option>
+                </select>
+              </label>
+              <label>
+                Categoria
+                <select>
+                  <option>Particular</option>
+                  <option>Flota</option>
+                  <option>Comercial</option>
+                  <option>Institucional</option>
+                </select>
+              </label>
+              <label>
+                Poliza
+                <input type="text" placeholder="Numero de poliza" />
+              </label>
+              <label>
+                Revision tecnica
+                <input type="text" placeholder="Vigencia" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Imágenes del vehiculo</h2>
+            <label class="file-dropzone">
+              <input type="file" accept="image/*" multiple />
+              <span class="dropzone-icon">+</span>
+              <strong>Sube fotos del carro</strong>
+              <small>Arrastra aqui o selecciona una o varias imágenes en formato JPG, PNG o WEBP.</small>
+            </label>
+            <p class="field-hint">Puedes adjuntar exteriores, interiores, placa, motor o cualquier evidencia visual relevante.</p>
+          </div>
+
+          <div class="form-section">
+            <label>
+              Observaciones
+              <textarea rows="5" placeholder="Notas, condiciones, incidencias o comentarios"></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="reset" class="button button-secondary">Limpiar</button>
+            <button type="submit" class="button button-primary">Guardar vehiculo</button>
+          </div>
+        </form>
+
+        <aside class="card side-summary">
+          <span class="eyebrow">Resumen visual</span>
+          <h2>Campos clave para un alta rapida.</h2>
+          <p>Este panel queda preparado para futuras validaciones, alertas y reglas de negocio.</p>
+          <div class="summary-list">
+            <article>
+              <strong>1</strong>
+              <span>Identificacion del vehiculo</span>
+            </article>
+            <article>
+              <strong>2</strong>
+              <span>Datos del propietario</span>
+            </article>
+            <article>
+              <strong>3</strong>
+              <span>Estado documental</span>
+            </article>
+          </div>
+          <div class="notice-box">
+            La logica de validacion y guardado se agregara en la siguiente etapa con JavaScript.
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
