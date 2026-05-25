@@ -34,38 +34,38 @@
       </section>
 
       <section class="form-layout">
-        <form class="card form-card">
+        <form class="card form-card" id="vehicle-registration-form" data-storage-key="autoreg.vehiculos">
           <div class="form-section">
             <h2>Datos del vehiculo</h2>
             <div class="form-grid">
               <label>
                 Placa
-                <input type="text" placeholder="ABC-123" />
+                <input id="placa" name="placa" type="text" placeholder="ABC-123" required autocomplete="off" />
               </label>
               <label>
                 Marca
-                <input type="text" placeholder="Toyota" />
+                <input id="marca" name="marca" type="text" placeholder="Toyota" required autocomplete="organization" />
               </label>
               <label>
                 Modelo
-                <input type="text" placeholder="Corolla" />
+                <input id="modelo" name="modelo" type="text" placeholder="Corolla" required autocomplete="off" />
               </label>
               <label>
-                Ano
-                <input type="number" placeholder="2024" />
+                Año
+                <input id="anio" name="anio" type="number" placeholder="2024" min="1900" max="2100" required />
               </label>
               <label>
                 Color
-                <input type="text" placeholder="Gris" />
+                <input id="color" name="color" type="text" placeholder="Gris" required autocomplete="off" />
               </label>
               <label>
                 Tipo
-                <select>
-                  <option>Automovil</option>
-                  <option>SUV</option>
-                  <option>Pickup</option>
-                  <option>Camioneta</option>
-                  <option>Motocicleta</option>
+                <select id="tipo" name="tipo" required>
+                  <option value="Automovil">Automovil</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Pickup">Pickup</option>
+                  <option value="Camioneta">Camioneta</option>
+                  <option value="Motocicleta">Motocicleta</option>
                 </select>
               </label>
             </div>
@@ -76,19 +76,19 @@
             <div class="form-grid">
               <label>
                 Nombre completo
-                <input type="text" placeholder="Nombre del propietario" />
+                <input id="propietarioNombre" name="propietarioNombre" type="text" placeholder="Nombre del propietario" required autocomplete="name" />
               </label>
               <label>
                 Documento
-                <input type="text" placeholder="ID / DNI / Cedula" />
+                <input id="propietarioDocumento" name="propietarioDocumento" type="text" placeholder="ID / DNI / Cedula" required autocomplete="off" />
               </label>
               <label>
                 Telefono
-                <input type="tel" placeholder="+00 0000 0000" />
+                <input id="propietarioTelefono" name="propietarioTelefono" type="tel" placeholder="+00 0000 0000" autocomplete="tel" />
               </label>
               <label>
                 Correo
-                <input type="email" placeholder="correo@dominio.com" />
+                <input id="propietarioCorreo" name="propietarioCorreo" type="email" placeholder="correo@dominio.com" autocomplete="email" />
               </label>
             </div>
           </div>
@@ -98,30 +98,30 @@
             <div class="form-grid">
               <label>
                 Estado actual
-                <select>
-                  <option>Pendiente</option>
-                  <option>En revision</option>
-                  <option>Aprobado</option>
-                  <option>Observado</option>
-                  <option>Bloqueado</option>
+                <select id="estadoActual" name="estadoActual" required>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="En revision">En revision</option>
+                  <option value="Aprobado">Aprobado</option>
+                  <option value="Observado">Observado</option>
+                  <option value="Bloqueado">Bloqueado</option>
                 </select>
               </label>
               <label>
                 Categoria
-                <select>
-                  <option>Particular</option>
-                  <option>Flota</option>
-                  <option>Comercial</option>
-                  <option>Institucional</option>
+                <select id="categoria" name="categoria" required>
+                  <option value="Particular">Particular</option>
+                  <option value="Flota">Flota</option>
+                  <option value="Comercial">Comercial</option>
+                  <option value="Institucional">Institucional</option>
                 </select>
               </label>
               <label>
                 Poliza
-                <input type="text" placeholder="Numero de poliza" />
+                <input id="poliza" name="poliza" type="text" placeholder="Numero de poliza" autocomplete="off" />
               </label>
               <label>
                 Revision tecnica
-                <input type="text" placeholder="Vigencia" />
+                <input id="revisionTecnica" name="revisionTecnica" type="text" placeholder="Vigencia" autocomplete="off" />
               </label>
             </div>
           </div>
@@ -129,10 +129,11 @@
           <div class="form-section">
             <h2>Imágenes del vehiculo</h2>
             <label class="file-dropzone">
-              <input type="file" accept="image/*" multiple />
+              <input id="imagenes" name="imagenes" type="file" accept="image/*" multiple />
               <span class="dropzone-icon">+</span>
               <strong>Sube fotos del carro</strong>
               <small>Arrastra aqui o selecciona una o varias imágenes en formato JPG, PNG o WEBP.</small>
+              <small class="file-summary" id="file-summary">Sin imagenes seleccionadas.</small>
             </label>
             <p class="field-hint">Puedes adjuntar exteriores, interiores, placa, motor o cualquier evidencia visual relevante.</p>
           </div>
@@ -140,7 +141,7 @@
           <div class="form-section">
             <label>
               Observaciones
-              <textarea rows="5" placeholder="Notas, condiciones, incidencias o comentarios"></textarea>
+              <textarea id="observaciones" name="observaciones" rows="5" placeholder="Notas, condiciones, incidencias o comentarios"></textarea>
             </label>
           </div>
 
@@ -148,6 +149,7 @@
             <button type="reset" class="button button-secondary">Limpiar</button>
             <button type="submit" class="button button-primary">Guardar vehiculo</button>
           </div>
+          <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
         </form>
 
         <aside class="card side-summary">
@@ -169,11 +171,12 @@
             </article>
           </div>
           <div class="notice-box">
-            La logica de validacion y guardado se agregara en la siguiente etapa con JavaScript.
+            Los registros guardados quedan disponibles en localStorage como JSON para futuras vistas.
           </div>
         </aside>
       </section>
     </main>
   </div>
+  <script src="../assets/js/registro.js" defer></script>
 </body>
 </html>

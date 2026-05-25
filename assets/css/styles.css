@@ -497,9 +497,17 @@ textarea {
 }
 
 .file-dropzone small,
-.field-hint {
+.field-hint,
+.file-summary {
   color: var(--muted);
   line-height: 1.5;
+}
+
+.file-summary {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(18, 32, 51, 0.06);
+  font-weight: 600;
 }
 
 label {
@@ -535,6 +543,21 @@ textarea:focus {
 
 textarea {
   resize: vertical;
+}
+
+.form-feedback {
+  min-height: 22px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.form-feedback.is-success {
+  color: #166534;
+}
+
+.form-feedback.is-error {
+  color: #b91c1c;
 }
 
 .summary-list {
