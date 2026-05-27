@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoReg | Registro de vehiculo</title>
+  <title>Registro de vehículo</title>
   <meta name="description" content="Formulario de registro de vehiculos con campos para informacion del auto y del propietario.">
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
-<body>
+<body class="registro-page">
   <div class="page-shell">
+    <div class="top-banner top-banner--car">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
     <header class="site-header compact">
       <a class="brand" href="../index.html">
-        <span class="brand-mark">AR</span>
+        <span class="brand-mark">RV</span>
         <span>
-          <strong>AutoReg</strong>
-          <small>Registro de vehiculos</small>
+          <strong>Registro de vehículos</strong>
+          <small>Gestor de registros vehiculares</small>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navegacion principal">
@@ -28,39 +34,41 @@
 
     <main class="page-main">
       <section class="page-intro">
-        <span class="eyebrow">Alta de unidad</span>
-        <h1>Formulario de registro de vehiculos.</h1>
+        <span class="eyebrow"></span>
+        <h1 id="formTitle">Registrar vehículo</h1>
         <p>Espacio para agregar información</p>
       </section>
 
       <section class="form-layout">
-        <form class="card form-card">
+        <div class="centered-form-wrap">
+          <form id="vehiculoForm" class="card form-card">
+          <input type="hidden" id="vehiculoId" />
           <div class="form-section">
             <h2>Datos del vehiculo</h2>
             <div class="form-grid">
               <label>
                 Placa
-                <input type="text" placeholder="ABC-123" />
+                <input id="placa" type="text" placeholder="ABC-123" required />
               </label>
               <label>
                 Marca
-                <input type="text" placeholder="Toyota" />
+                <input id="marca" type="text" placeholder="Toyota" required />
               </label>
               <label>
                 Modelo
-                <input type="text" placeholder="Corolla" />
+                <input id="modelo" type="text" placeholder="Corolla" required />
               </label>
               <label>
-                Ano
-                <input type="number" placeholder="2024" />
+                Año
+                <input id="anio" type="number" placeholder="2024" required />
               </label>
               <label>
                 Color
-                <input type="text" placeholder="Gris" />
+                <input id="color" type="text" placeholder="Gris" required />
               </label>
               <label>
                 Tipo
-                <select>
+                <select id="tipo" required>
                   <option>Automovil</option>
                   <option>SUV</option>
                   <option>Pickup</option>
@@ -76,19 +84,32 @@
             <div class="form-grid">
               <label>
                 Nombre completo
-                <input type="text" placeholder="Nombre del propietario" />
+                <input id="propietario" type="text" placeholder="Nombre del propietario" required />
               </label>
               <label>
-                Documento
-                <input type="text" placeholder="ID / DNI / Cedula" />
+                Documento (DUI o Pasaporte)
+                <input id="documento" type="text" placeholder="DUI o Pasaporte" required />
               </label>
               <label>
-                Telefono
-                <input type="tel" placeholder="+00 0000 0000" />
+                Teléfono
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <select id="phonePrefix" required style="max-width:120px;">
+                    <option value="+1">+1</option>
+                    <option value="+52">+52</option>
+                    <option value="+34">+34</option>
+                    <option value="+57">+57</option>
+                    <option value="+503">+503</option>
+                    <option value="+504">+504</option>
+                    <option value="+506">+506</option>
+                    <option value="+598">+598</option>
+                    <option value="+44">+44</option>
+                  </select>
+                  <input id="telefonoNumber" type="tel" placeholder="0000 0000" required style="flex:1;" />
+                </div>
               </label>
               <label>
                 Correo
-                <input type="email" placeholder="correo@dominio.com" />
+                <input id="correo" type="email" placeholder="correo@dominio.com" required />
               </label>
             </div>
           </div>
@@ -98,7 +119,7 @@
             <div class="form-grid">
               <label>
                 Estado actual
-                <select>
+                <select id="estado" required>
                   <option>Pendiente</option>
                   <option>En revision</option>
                   <option>Aprobado</option>
@@ -108,7 +129,7 @@
               </label>
               <label>
                 Categoria
-                <select>
+                <select id="categoria" required>
                   <option>Particular</option>
                   <option>Flota</option>
                   <option>Comercial</option>
@@ -117,11 +138,11 @@
               </label>
               <label>
                 Poliza
-                <input type="text" placeholder="Numero de poliza" />
+                <input id="poliza" type="text" placeholder="Numero de poliza" required />
               </label>
               <label>
                 Revision tecnica
-                <input type="text" placeholder="Vigencia" />
+                <input id="revision" type="text" placeholder="Vigencia" required />
               </label>
             </div>
           </div>
@@ -129,51 +150,34 @@
           <div class="form-section">
             <h2>Imágenes del vehiculo</h2>
             <label class="file-dropzone">
-              <input type="file" accept="image/*" multiple />
+              <input id="imagenesInput" type="file" accept="image/*" multiple />
               <span class="dropzone-icon">+</span>
               <strong>Sube fotos del carro</strong>
               <small>Arrastra aqui o selecciona una o varias imágenes en formato JPG, PNG o WEBP.</small>
             </label>
+            <div id="imagenesPreview" style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;"></div>
             <p class="field-hint">Puedes adjuntar exteriores, interiores, placa, motor o cualquier evidencia visual relevante.</p>
           </div>
 
           <div class="form-section">
             <label>
               Observaciones
-              <textarea rows="5" placeholder="Notas, condiciones, incidencias o comentarios"></textarea>
+              <textarea id="observaciones" rows="5" placeholder="Notas, condiciones, incidencias o comentarios" required></textarea>
             </label>
           </div>
+
+          <div class="form-alert" id="registro-alert" aria-live="polite"></div>
 
           <div class="form-actions">
             <button type="reset" class="button button-secondary">Limpiar</button>
             <button type="submit" class="button button-primary">Guardar vehiculo</button>
           </div>
-        </form>
-
-        <aside class="card side-summary">
-          <span class="eyebrow">Resumen visual</span>
-          <h2>Campos clave para un alta rapida.</h2>
-          <p>Este panel queda preparado para futuras validaciones, alertas y reglas de negocio.</p>
-          <div class="summary-list">
-            <article>
-              <strong>1</strong>
-              <span>Identificacion del vehiculo</span>
-            </article>
-            <article>
-              <strong>2</strong>
-              <span>Datos del propietario</span>
-            </article>
-            <article>
-              <strong>3</strong>
-              <span>Estado documental</span>
-            </article>
-          </div>
-          <div class="notice-box">
-            La logica de validacion y guardado se agregara en la siguiente etapa con JavaScript.
-          </div>
-        </aside>
+          </form>
+        </div>
       </section>
     </main>
   </div>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/registro.js"></script>
 </body>
 </html>

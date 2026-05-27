@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoReg | Dashboard</title>
+  <title>Dashboard | Registro de vehículos</title>
   <meta name="description" content="Dashboard moderno con indicadores de registros, estados y actividad reciente.">
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
   <div class="page-shell">
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
     <header class="site-header compact">
       <a class="brand" href="../index.html">
-        <span class="brand-mark">AR</span>
+        <span class="brand-mark">RV</span>
         <span>
-          <strong>AutoReg</strong>
-          <small>Dashboard operativo</small>
+          <strong>Registro de vehículos</strong>
+          <small>Gestor de registros vehiculares</small>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navegacion principal">
@@ -33,26 +39,58 @@
         <p>El dashboard combina tarjetas, barras y tablas para representar la operacion de forma clara.</p>
       </section>
 
+      <div class="stats-actions">
+        <button id="refreshDashboardBtn" class="button button-secondary" type="button">Actualizar datos</button>
+      </div>
+
       <section class="stats-grid">
         <article class="stat-card card">
           <span>Total registros</span>
-          <strong>1,240</strong>
-          <small>+8.2% respecto a la semana anterior</small>
+          <strong id="totalRegistros">0</strong>
+          <small>Actualizado con registros reales</small>
         </article>
         <article class="stat-card card">
           <span>Aprobados</span>
-          <strong>892</strong>
-          <small>72% del total actual</small>
+          <strong id="aprobados">0</strong>
+          <small>Parte del total real</small>
         </article>
         <article class="stat-card card">
-          <span>En revision</span>
-          <strong>214</strong>
-          <small>Casos pendientes de validacion</small>
+          <span>Pendientes</span>
+          <strong id="pendientes">0</strong>
+          <small>Registros en espera de revisión</small>
         </article>
         <article class="stat-card card">
           <span>Observados</span>
-          <strong>134</strong>
-          <small>Requieren correccion documental</small>
+          <strong id="observados">0</strong>
+          <small>Vehículos con observaciones reales</small>
+        </article>
+        <article class="stat-card card status-card status-danger">
+          <span>Bloqueados</span>
+          <strong id="bloqueados">0</strong>
+          <small>Registros bloqueados reales</small>
+        </article>
+      </section>
+      <div class="panel-note" id="storageStatus">Validando datos guardados...</div>
+
+      <div class="panel-note" style="margin-top:12px; display:flex; gap:12px; align-items:flex-start;">
+        <button id="toggleRawBtn" class="button button-secondary" type="button">Mostrar datos crudos</button>
+        <div id="storageDebug" style="display:none; white-space:pre-wrap; background:#fff; padding:12px; border-radius:8px; overflow:auto; max-height:220px; width:100%;">--</div>
+      </div>
+      <!-- Toast container for notifications -->
+      <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+      <section class="dashboard-layout">
+        <article class="card status-card">
+          <div class="section-head">
+            <h2>Ubicación y clima</h2>
+          </div>
+          <p id="clima">Cargando clima...</p>
+        </article>
+        <article class="card status-card">
+          <div class="section-head">
+            <h2>Worker</h2>
+          </div>
+          <p id="workerStats">Esperando procesamiento...</p>
         </article>
       </section>
 
@@ -65,14 +103,14 @@
           <div class="donut-wrap">
             <div class="donut-chart" aria-label="Grafico circular de estados">
               <div class="donut-center">
-                <strong>74%</strong>
-                <span>Aprobados</span>
+                <strong id="donut-center-percent">74%</strong>
+                <span id="donut-center-label">Aprobados</span>
               </div>
             </div>
             <div class="legend-list">
-              <div><i class="legend-dot approved-dot"></i><span>Aprobado</span><strong>74%</strong></div>
-              <div><i class="legend-dot review-dot"></i><span>En revision</span><strong>18%</strong></div>
-              <div><i class="legend-dot warning-dot"></i><span>Observado</span><strong>8%</strong></div>
+              <div><i class="legend-dot approved-dot"></i><span>Aprobado</span><strong id="legend-approved-pct">74%</strong></div>
+              <div><i class="legend-dot review-dot"></i><span>En revision</span><strong id="legend-review-pct">18%</strong></div>
+              <div><i class="legend-dot warning-dot"></i><span>Observado</span><strong id="legend-warning-pct">8%</strong></div>
             </div>
           </div>
         </article>
@@ -82,13 +120,8 @@
             <h2>Evolucion semanal</h2>
             <span class="status-pill status-online">Tendencia</span>
           </div>
-          <div class="bar-chart stacked-bars">
-            <div class="bar-row bar-vertical"><span>Lun</span><div class="bar"><i style="height:42%"></i></div><strong>42</strong></div>
-            <div class="bar-row bar-vertical"><span>Mar</span><div class="bar"><i style="height:58%"></i></div><strong>58</strong></div>
-            <div class="bar-row bar-vertical"><span>Mie</span><div class="bar"><i style="height:74%"></i></div><strong>74</strong></div>
-            <div class="bar-row bar-vertical"><span>Jue</span><div class="bar"><i style="height:66%"></i></div><strong>66</strong></div>
-            <div class="bar-row bar-vertical"><span>Vie</span><div class="bar"><i style="height:88%"></i></div><strong>88</strong></div>
-            <div class="bar-row bar-vertical"><span>Sab</span><div class="bar"><i style="height:51%"></i></div><strong>51</strong></div>
+          <div class="bar-chart stacked-bars" id="weeklyTrendBars">
+            <!-- Se llenará con datos reales de la última semana -->
           </div>
         </article>
       </section>
@@ -99,19 +132,8 @@
             <h2>Actividad reciente</h2>
             <span class="status-pill status-online">Tiempo real</span>
           </div>
-          <div class="activity-list">
-            <div>
-              <strong>ABC-123</strong>
-              <p>Vehiculo aprobado y asignado a flota.</p>
-            </div>
-            <div>
-              <strong>JKT-554</strong>
-              <p>Registro en revision por documento vencido.</p>
-            </div>
-            <div>
-              <strong>PLQ-902</strong>
-              <p>Observado por inconsistencia en revision tecnica.</p>
-            </div>
+          <div class="activity-list" id="recentActivityList">
+            <div>No hay actividad reciente</div>
           </div>
         </article>
 
@@ -122,16 +144,16 @@
           </div>
           <div class="capacity-stack">
             <div class="capacity-item">
-              <div class="progress-row"><span>Registro total</span><strong>88%</strong></div>
-              <div class="progress-bar"><span style="width:88%"></span></div>
+              <div class="progress-row"><span>Registro total</span><strong id="capacityTotalPct">0%</strong></div>
+              <div class="progress-bar"><span id="capacityTotalBar" style="width:0%"></span></div>
             </div>
             <div class="capacity-item">
-              <div class="progress-row"><span>Validacion documental</span><strong>72%</strong></div>
-              <div class="progress-bar"><span style="width:72%"></span></div>
+              <div class="progress-row"><span>Validacion documental</span><strong id="capacityDocPct">0%</strong></div>
+              <div class="progress-bar"><span id="capacityDocBar" style="width:0%"></span></div>
             </div>
             <div class="capacity-item">
-              <div class="progress-row"><span>Resolucion de observados</span><strong>54%</strong></div>
-              <div class="progress-bar"><span style="width:54%"></span></div>
+              <div class="progress-row"><span>Resolucion de observados</span><strong id="capacityResolvePct">0%</strong></div>
+              <div class="progress-bar"><span id="capacityResolveBar" style="width:0%"></span></div>
             </div>
           </div>
         </article>
@@ -140,10 +162,10 @@
       <section class="card table-card">
         <div class="section-head">
           <h2>Ultimos registros</h2>
-          <span class="status-pill">10 items</span>
+          <span class="status-pill">Recientes</span>
         </div>
         <div class="table-wrap">
-          <table>
+          <table id="latestRecordsTable">
             <thead>
               <tr>
                 <th>Placa</th>
@@ -153,16 +175,13 @@
                 <th>Fecha</th>
               </tr>
             </thead>
-            <tbody>
-              <tr><td>ABC-123</td><td>Toyota</td><td>Corolla</td><td><span class="table-badge approved">Aprobado</span></td><td>22/05/2026</td></tr>
-              <tr><td>JKT-554</td><td>Hyundai</td><td>Tucson</td><td><span class="table-badge review">Revision</span></td><td>22/05/2026</td></tr>
-              <tr><td>PLQ-902</td><td>Ford</td><td>Ranger</td><td><span class="table-badge warning">Observado</span></td><td>21/05/2026</td></tr>
-              <tr><td>MXV-118</td><td>Nissan</td><td>Sentra</td><td><span class="table-badge approved">Aprobado</span></td><td>21/05/2026</td></tr>
-            </tbody>
+            <tbody id="latestRecordsBody"></tbody>
           </table>
         </div>
       </section>
     </main>
   </div>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>
