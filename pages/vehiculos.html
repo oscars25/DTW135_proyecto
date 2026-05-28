@@ -29,6 +29,7 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="vehiculos.html" class="active">Vehiculos</a>
         <a href="estados.html">Estados</a>
+        <a href="#" data-logout="true">Cerrar sesion</a>
       </nav>
     </header>
 
@@ -44,6 +45,9 @@
           Buscar por placa
           <input id="filtroPlaca" type="text" placeholder="Filtrar por placa" />
         </label>
+        <div class="filter-actions">
+          <button id="exportarListadoBtn" class="button button-primary" type="button">Exportar listado a PDF</button>
+        </div>
       </section>
 
       <section class="card table-card">
@@ -57,6 +61,7 @@
                 <th>Año</th>
                 <th>Propietario</th>
                 <th>Estado</th>
+                <th>Registro</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -64,9 +69,27 @@
           </table>
         </div>
       </section>
+
+      <section id="registroDetalleCard" class="card detail-card" hidden>
+        <div class="section-head">
+          <h2>Registro seleccionado</h2>
+          <span id="detalleEstado" class="estado-badge">Sin estado</span>
+        </div>
+        <div id="detalleMeta" class="detail-meta"></div>
+        <div id="detalleGrid" class="detail-grid"></div>
+        <div id="detalleImagenes" class="detail-images"></div>
+        <div class="detail-actions">
+          <button id="exportarDetalleBtn" class="button button-primary" type="button">Exportar este registro a PDF</button>
+          <button id="editarDetalleBtn" class="button button-secondary" type="button">Editar registro</button>
+          <button id="cerrarDetalleBtn" class="button button-secondary" type="button">Cerrar detalle</button>
+        </div>
+      </section>
     </main>
   </div>
+  <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
   <script src="../assets/js/vehiculos.js"></script>
 </body>
 </html>
