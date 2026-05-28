@@ -436,16 +436,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // Demo data button
-  const demoBtnContainer = document.getElementById('storageStatus')?.parentElement;
-  if (demoBtnContainer && !document.getElementById('demoBtnCreated')) {
+  const main = document.querySelector('.page-main');
+  if (main && !document.getElementById('demoBtnCreated')) {
+    const demoActions = document.createElement('div');
+    demoActions.className = 'dashboard-demo-actions';
+
     const demoBtn = document.createElement('button');
     demoBtn.id = 'demoBtnCreated';
     demoBtn.className = 'button button-secondary';
     demoBtn.type = 'button';
     demoBtn.textContent = 'Cargar datos de demostración';
-    demoBtn.style.marginTop = '12px';
     demoBtn.addEventListener('click', cargarDatosDemo);
-    demoBtnContainer.appendChild(demoBtn);
+
+    demoActions.appendChild(demoBtn);
+    main.appendChild(demoActions);
   }
   
 window.addEventListener('storage', () => {
