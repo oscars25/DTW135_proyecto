@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoReg | Estados</title>
+  <title>Estados | Registro de vehículos</title>
   <meta name="description" content="Vista de estados de vehiculos con indicadores de aprobacion, revision y alertas.">
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
   <div class="page-shell">
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
     <header class="site-header compact">
       <a class="brand" href="../index.html">
-        <span class="brand-mark">AR</span>
+        <span class="brand-mark">RV</span>
         <span>
-          <strong>AutoReg</strong>
-          <small>Control de estados</small>
+          <strong>Registro de vehículos</strong>
+          <small>Gestor de registros vehiculares</small>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navegacion principal">
@@ -23,6 +29,7 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="vehiculos.html">Vehiculos</a>
         <a href="estados.html" class="active">Estados</a>
+        <a href="#" data-logout="true">Cerrar sesion</a>
       </nav>
     </header>
 
@@ -34,20 +41,25 @@
       </section>
 
       <section class="status-grid">
+        <article class="card status-card status-total">
+          <span class="status-pill">Total</span>
+          <strong id="estadoTotal">0</strong>
+          <p id="estadoTotalText">Registros totales guardados en el sistema.</p>
+        </article>
         <article class="card status-card status-approved">
           <span class="status-pill">Aprobado</span>
-          <strong>892</strong>
-          <p>Vehiculos habilitados para operacion.</p>
+          <strong id="estadoAprobado">0</strong>
+          <p>Vehículos habilitados para operación.</p>
         </article>
         <article class="card status-card status-review">
           <span class="status-pill">En revision</span>
-          <strong>214</strong>
-          <p>Registros pendientes de validacion.</p>
+          <strong id="estadoRevision">0</strong>
+          <p>Registros pendientes de validación.</p>
         </article>
         <article class="card status-card status-warning">
           <span class="status-pill">Observado</span>
-          <strong>134</strong>
-          <p>Casos que requieren correccion.</p>
+          <strong id="estadoObservado">0</strong>
+          <p>Casos que requieren corrección.</p>
         </article>
       </section>
 
@@ -73,5 +85,8 @@
       </section>
     </main>
   </div>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/estados.js"></script>
 </body>
 </html>

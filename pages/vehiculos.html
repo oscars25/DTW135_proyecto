@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoReg | Vehiculos</title>
+  <title>Vehículos | Registro de vehículos</title>
   <meta name="description" content="Listado visual de vehiculos registrados con detalles basicos y estado.">
   <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
   <div class="page-shell">
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
     <header class="site-header compact">
       <a class="brand" href="../index.html">
-        <span class="brand-mark">AR</span>
+        <span class="brand-mark">RV</span>
         <span>
-          <strong>AutoReg</strong>
-          <small>Inventario de vehiculos</small>
+          <strong>Registro de vehículos</strong>
+          <small>Gestor de registros vehiculares</small>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navegacion principal">
@@ -23,57 +29,67 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="vehiculos.html" class="active">Vehiculos</a>
         <a href="estados.html">Estados</a>
+        <a href="#" data-logout="true">Cerrar sesion</a>
       </nav>
     </header>
 
     <main class="page-main">
       <section class="page-intro">
         <span class="eyebrow">Inventario</span>
-        <h1>Listado visual de vehiculos para consultas rapidas y administracion posterior.</h1>
-        <p>Esta vista sirve como base para filtros, busqueda avanzada y acciones sobre cada registro.</p>
+        <h1>Listado de vehículos registrados</h1>
+        <p>Busca, edita y elimina registros directamente desde la tabla.</p>
       </section>
 
-      <section class="vehicle-grid">
-        <article class="card vehicle-card">
-          <div class="vehicle-head">
-            <strong>ABC-123</strong>
-            <span class="table-badge approved">Aprobado</span>
-          </div>
-          <p>Toyota Corolla 2024, color gris, propiedad de Ana Perez.</p>
-          <dl>
-            <div><dt>Tipo</dt><dd>Automovil</dd></div>
-            <div><dt>Categoria</dt><dd>Particular</dd></div>
-            <div><dt>Ultima actualizacion</dt><dd>22/05/2026</dd></div>
-          </dl>
-        </article>
+      <section class="vehicle-filter card">
+        <label>
+          Buscar por placa
+          <input id="filtroPlaca" type="text" placeholder="Filtrar por placa" />
+        </label>
+        <div class="filter-actions">
+          <button id="exportarListadoBtn" class="button button-primary" type="button">Exportar listado a PDF</button>
+        </div>
+      </section>
 
-        <article class="card vehicle-card">
-          <div class="vehicle-head">
-            <strong>JKT-554</strong>
-            <span class="table-badge review">Revision</span>
-          </div>
-          <p>Hyundai Tucson 2023, plata, pendiente de validacion documental.</p>
-          <dl>
-            <div><dt>Tipo</dt><dd>SUV</dd></div>
-            <div><dt>Categoria</dt><dd>Flota</dd></div>
-            <div><dt>Ultima actualizacion</dt><dd>22/05/2026</dd></div>
-          </dl>
-        </article>
+      <section class="card table-card">
+        <div class="table-wrap">
+          <table id="vehiculosTable">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Propietario</th>
+                <th>Estado</th>
+                <th>Registro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="vehiculosTableBody"></tbody>
+          </table>
+        </div>
+      </section>
 
-        <article class="card vehicle-card">
-          <div class="vehicle-head">
-            <strong>PLQ-902</strong>
-            <span class="table-badge warning">Observado</span>
-          </div>
-          <p>Ford Ranger 2022, azul, requiere ajuste en revision tecnica.</p>
-          <dl>
-            <div><dt>Tipo</dt><dd>Pickup</dd></div>
-            <div><dt>Categoria</dt><dd>Comercial</dd></div>
-            <div><dt>Ultima actualizacion</dt><dd>21/05/2026</dd></div>
-          </dl>
-        </article>
+      <section id="registroDetalleCard" class="card detail-card" hidden>
+        <div class="section-head">
+          <h2>Registro seleccionado</h2>
+          <span id="detalleEstado" class="estado-badge">Sin estado</span>
+        </div>
+        <div id="detalleMeta" class="detail-meta"></div>
+        <div id="detalleGrid" class="detail-grid"></div>
+        <div id="detalleImagenes" class="detail-images"></div>
+        <div class="detail-actions">
+          <button id="exportarDetalleBtn" class="button button-primary" type="button">Exportar este registro a PDF</button>
+          <button id="editarDetalleBtn" class="button button-secondary" type="button">Editar registro</button>
+          <button id="cerrarDetalleBtn" class="button button-secondary" type="button">Cerrar detalle</button>
+        </div>
       </section>
     </main>
   </div>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="../assets/js/vehiculos.js"></script>
 </body>
 </html>

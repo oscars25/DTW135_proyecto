@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoReg | Registro moderno de vehiculos</title>
+  <title>Registro de vehículos</title>
   <meta name="description" content="Plataforma moderna para registro de vehiculos, seguimiento de estados y visualizacion de indicadores.">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
   <div class="page-shell">
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
     <header class="site-header">
       <a class="brand" href="index.html">
-        <span class="brand-mark">AR</span>
+        <span class="brand-mark">RV</span>
         <span>
-          <strong>AutoReg</strong>
-          <small>Gestor de vehiculos</small>
+          <strong>Registro de vehículos</strong>
+          <small>Gestor de registros vehiculares</small>
         </span>
       </a>
       <nav class="site-nav" aria-label="Navegacion principal">
@@ -23,6 +29,7 @@
         <a href="pages/dashboard.html">Dashboard</a>
         <a href="pages/vehiculos.html">Vehiculos</a>
         <a href="pages/estados.html">Estados</a>
+        <a href="#" data-logout="true">Cerrar sesion</a>
       </nav>
       <a class="button button-primary" href="pages/registro.html">Nuevo registro</a>
     </header>
@@ -63,25 +70,25 @@
           </div>
           <div class="mini-stats">
             <article>
-              <strong>482</strong>
-              <span>Vehiculos nuevos</span>
+              <strong id="newVehicles">0</strong>
+              <span>Vehículos nuevos</span>
             </article>
             <article>
-              <strong>76</strong>
-              <span>En revision</span>
+              <strong id="inReview">0</strong>
+              <span>En revisión</span>
             </article>
             <article>
-              <strong>31</strong>
+              <strong id="observedSummary">0</strong>
               <span>Observados</span>
             </article>
           </div>
           <div class="progress-group">
-            <div class="progress-row"><span>Completitud</span><span>88%</span></div>
-            <div class="progress-bar"><span style="width:88%"></span></div>
+            <div class="progress-row"><span>Completitud</span><span id="completitudPct">0%</span></div>
+            <div class="progress-bar"><span id="completitudBar" style="width:0%"></span></div>
           </div>
           <div class="progress-group">
-            <div class="progress-row"><span>Validacion documental</span><span>72%</span></div>
-            <div class="progress-bar"><span style="width:72%"></span></div>
+            <div class="progress-row"><span>Validación documental</span><span id="validacionPct">0%</span></div>
+            <div class="progress-bar"><span id="validacionBar" style="width:0%"></span></div>
           </div>
           <div class="panel-note">
             Diseñado para escalar hacia validaciones, filtros y automatizaciones posteriores.
@@ -107,46 +114,15 @@
         </article>
       </section>
 
-      <section class="content-split">
-        <article class="card highlight-card">
-          <span class="eyebrow">Flujo principal</span>
-          <h2>Una ruta clara para capturar informacion y luego analizarla.</h2>
-          <p>
-            La estructura prioriza una navegacion simple: iniciar el registro, consultar el dashboard,
-            revisar el inventario de vehiculos y administrar sus estados sin perder contexto.
-          </p>
-          <ul class="check-list">
-            <li>Landing enfocada en conversion y acceso rapido.</li>
-            <li>Vista de registro con campos agrupados por secciones.</li>
-            <li>Dashboard con metricas, barras y tablas de actividad.</li>
-          </ul>
-        </article>
-
-        <article class="card timeline-card">
-          <span class="eyebrow">Accesos rapidos</span>
-          <div class="timeline-item">
-            <strong><a href="pages/registro.html">Registrar vehiculo</a></strong>
-            <p>Captura de datos esenciales y documentos.</p>
-          </div>
-          <div class="timeline-item">
-            <strong><a href="pages/dashboard.html">Abrir dashboard</a></strong>
-            <p>Indicadores y actividad reciente.</p>
-          </div>
-          <div class="timeline-item">
-            <strong><a href="pages/vehiculos.html">Ver vehiculos</a></strong>
-            <p>Listado estructurado de registros.</p>
-          </div>
-          <div class="timeline-item">
-            <strong><a href="pages/estados.html">Revisar estados</a></strong>
-            <p>Control de aprobacion, revision y alerta.</p>
-          </div>
-        </article>
-      </section>
+      <!-- Removed 'Flujo principal' and 'Accesos rapidos' sections as requested -->
     </main>
 
     <footer class="site-footer">
       <p>AutoReg. Interfaz base para registro moderno de vehiculos.</p>
     </footer>
   </div>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/index.js"></script>
 </body>
 </html>
