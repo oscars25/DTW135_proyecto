@@ -1,486 +1,276 @@
 "use strict";
 
-const form = document.querySelector("#vehicle-registration-form");
-const fileInput = document.querySelector("#imagenes");
-const fileSummary = document.querySelector("#file-summary");
-const feedback = document.querySelector("#form-feedback");
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("vehiculoForm");
+  const title = document.getElementById("formTitle");
+  const idField = document.getElementById("vehiculoId");
+  const alertBox = document.getElementById("registro-alert");
+  const imageInput = document.getElementById("imagenesInput");
+  const imagePreview = document.getElementById("imagenesPreview");
+  const fileSummary = document.getElementById("file-summary");
 
-const buildId = () => {
-  if (window.crypto && typeof window.crypto.randomUUID === "function") {
-    return window.crypto.randomUUID();
+  if (!form || !title || !idField || !alertBox) {
+    return;
   }
 
-  return `vehiculo_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-};
+  let currentVehicle = null;
+  let selectedImages = [];
+  let existingImages = [];
+  const removedExisting = new Set();
 
-const normalizeValue = (value) => String(value ?? "").trim();
-
-const normalizePlate = (value) => normalizeValue(value).toUpperCase().replace(/\s+/g, "");
-
-const slugify = (value) =>
-  normalizeValue(value)
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_|_$/g, "");
-
-const getStoredVehicles = (storageKey) => {
-  const rawVehicles = localStorage.getItem(storageKey);
-
-  if (!rawVehicles) {
-    return [];
-  }
-
-  try {
-    const vehicles = JSON.parse(rawVehicles);
-    return Array.isArray(vehicles) ? vehicles : [];
-  } catch (error) {
-    console.warn("No se pudo leer el JSON de vehiculos guardados.", error);
-    return [];
-  }
-};
-
-const saveStoredVehicles = (storageKey, vehicles) => {
-  localStorage.setItem(storageKey, JSON.stringify(vehicles));
-};
-
-const getImageMetadata = () =>
-  Array.from(fileInput?.files ?? []).map((file) => ({
-    id: buildId(),
-    nombre: file.name,
-    tipo: file.type,
-    pesoBytes: file.size,
-    pesoKb: Number((file.size / 1024).toFixed(2)),
-    ultimaModificacion: new Date(file.lastModified).toISOString(),
-  }));
-
-const buildVehicleRecord = (formData, storageKey) => {
-  const now = new Date().toISOString();
-  const estadoNombre = normalizeValue(formData.get("estadoActual"));
-  const estadoCodigo = slugify(estadoNombre);
-  const placa = normalizePlate(formData.get("placa"));
-  const marca = normalizeValue(formData.get("marca"));
-  const modelo = normalizeValue(formData.get("modelo"));
-  const propietarioNombre = normalizeValue(formData.get("propietarioNombre"));
-  const propietarioDocumento = normalizeValue(formData.get("propietarioDocumento"));
-
-  return {
-    id: buildId(),
-    folio: `AR-${Date.now()}`,
-    version: 1,
-    fechas: {
-      creadoEn: now,
-      actualizadoEn: now,
-    },
-    vehiculo: {
-      placa,
-      marca,
-      modelo,
-      anio: Number(formData.get("anio")),
-      color: normalizeValue(formData.get("color")),
-      tipo: normalizeValue(formData.get("tipo")),
-    },
-    propietario: {
-      nombreCompleto: propietarioNombre,
-      documento: propietarioDocumento,
-      telefono: normalizeValue(formData.get("propietarioTelefono")),
-      correo: normalizeValue(formData.get("propietarioCorreo")).toLowerCase(),
-    },
-    estado: {
-      codigo: estadoCodigo,
-      nombre: estadoNombre,
-      actualizadoEn: now,
-    },
-    documentos: {
-      categoria: normalizeValue(formData.get("categoria")),
-      poliza: normalizeValue(formData.get("poliza")),
-      revisionTecnica: normalizeValue(formData.get("revisionTecnica")),
-    },
-    evidencias: {
-      imagenes: getImageMetadata(),
-    },
-    observaciones: normalizeValue(formData.get("observaciones")),
-    historial: [
-      {
-        id: buildId(),
-        tipo: "creacion",
-        estado: {
-          codigo: estadoCodigo,
-          nombre: estadoNombre,
-        },
-        fecha: now,
-        detalle: "Registro inicial desde formulario.",
-      },
-    ],
-    busqueda: [
-      placa,
-      marca,
-      modelo,
-      propietarioNombre,
-      propietarioDocumento,
-      estadoNombre,
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase(),
-    metadata: {
-      origen: "pages/registro.html",
-      storageKey,
-    },
+  const showAlert = (message, variant = "error") => {
+    alertBox.textContent = message;
+    alertBox.className = `form-alert ${variant === "success" ? "alert-success" : "alert-error"}`;
   };
-};
 
-const setFeedback = (message, type = "success") => {
-  if (!feedback) {
-    return;
+  const clearAlert = () => {
+    alertBox.textContent = "";
+    alertBox.className = "form-alert";
+  };
+
+  const getField = (id) => document.getElementById(id);
+  const getValue = (id) => String(getField(id)?.value || "").trim();
+  const setValue = (id, value) => {
+    const field = getField(id);
+    if (field) {
+      field.value = value || "";
+    }
+  };
+
+  const normalizePlate = (value) => value.toUpperCase().replace(/\s+/g, "");
+
+  const readFileAsDataURL = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("No se pudo leer la imagen."));
+      reader.readAsDataURL(file);
+    });
+
+  const optimizeImage = async (file) => {
+    if (typeof resizeImage === "function") {
+      return resizeImage(file, 1200, 800, 0.75);
+    }
+
+    return readFileAsDataURL(file);
+  };
+
+  const keptExistingImages = () => existingImages.filter((src) => !removedExisting.has(src));
+
+  const updateFileSummary = () => {
+    if (!fileSummary) {
+      return;
+    }
+
+    const total = keptExistingImages().length + selectedImages.length;
+
+    if (total === 0) {
+      fileSummary.textContent = "Sin im\u00e1genes seleccionadas.";
+    } else if (total === 1) {
+      fileSummary.textContent = "1 imagen lista.";
+    } else {
+      fileSummary.textContent = `${total} im\u00e1genes listas.`;
+    }
+  };
+
+  const createPreviewCard = (src, label, onRemove) => {
+    const card = document.createElement("figure");
+    card.className = "image-preview-card";
+
+    const image = document.createElement("img");
+    image.src = src;
+    image.alt = label;
+    image.loading = "lazy";
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "image-preview-remove";
+    removeButton.textContent = "x";
+    removeButton.setAttribute("aria-label", `Eliminar ${label.toLowerCase()}`);
+    removeButton.addEventListener("click", onRemove);
+
+    const caption = document.createElement("figcaption");
+    caption.textContent = label;
+
+    card.append(image, removeButton, caption);
+    return card;
+  };
+
+  const renderPreview = () => {
+    if (!imagePreview) {
+      return;
+    }
+
+    imagePreview.innerHTML = "";
+
+    keptExistingImages().forEach((src, index) => {
+      imagePreview.appendChild(
+        createPreviewCard(src, `Imagen guardada ${index + 1}`, () => {
+          removedExisting.add(src);
+          renderPreview();
+        })
+      );
+    });
+
+    selectedImages.forEach((src, index) => {
+      imagePreview.appendChild(
+        createPreviewCard(src, `Imagen nueva ${index + 1}`, () => {
+          selectedImages.splice(index, 1);
+          renderPreview();
+        })
+      );
+    });
+
+    updateFileSummary();
+  };
+
+  const splitPhone = (phone) => {
+    const parts = String(phone || "").trim().split(/\s+/);
+    const prefix = parts[0]?.startsWith("+") ? parts[0] : "+503";
+    const number = parts[0]?.startsWith("+") ? parts.slice(1).join(" ") : parts.join(" ");
+    return { prefix, number };
+  };
+
+  const loadVehicleForEdit = () => {
+    const editId = new URLSearchParams(window.location.search).get("id");
+
+    if (!editId) {
+      return;
+    }
+
+    if (typeof getVehiculoById !== "function") {
+      showAlert("No se pudo cargar el registro para editar.");
+      return;
+    }
+
+    const vehicle = getVehiculoById(editId);
+
+    if (!vehicle) {
+      showAlert("No se encontr\u00f3 el veh\u00edculo a editar. Puedes crear uno nuevo.");
+      return;
+    }
+
+    currentVehicle = vehicle;
+    title.textContent = "Editar veh\u00edculo";
+    idField.value = vehicle.id || "";
+
+    setValue("placa", vehicle.placa);
+    setValue("marca", vehicle.marca);
+    setValue("modelo", vehicle.modelo);
+    setValue("anio", vehicle.anio);
+    setValue("color", vehicle.color);
+    setValue("tipo", vehicle.tipo || "Automovil");
+    setValue("propietario", vehicle.propietario);
+    setValue("documento", vehicle.documento);
+    setValue("correo", vehicle.correo);
+    setValue("estado", vehicle.estado || "Pendiente");
+    setValue("categoria", vehicle.categoria || "Particular");
+    setValue("poliza", vehicle.poliza);
+    setValue("revision", vehicle.revision);
+    setValue("observaciones", vehicle.observaciones);
+
+    const { prefix, number } = splitPhone(vehicle.telefono);
+    setValue("phonePrefix", prefix);
+    setValue("telefonoNumber", number);
+
+    existingImages = Array.isArray(vehicle.images) ? vehicle.images.slice() : [];
+    renderPreview();
+  };
+
+  if (imageInput) {
+    imageInput.addEventListener("change", async () => {
+      clearAlert();
+
+      const availableSlots = Math.max(0, 8 - selectedImages.length - keptExistingImages().length);
+      const files = Array.from(imageInput.files || []).slice(0, availableSlots);
+
+      if (files.length === 0 && imageInput.files?.length) {
+        showAlert("Puedes adjuntar hasta 8 im\u00e1genes por registro.");
+        imageInput.value = "";
+        return;
+      }
+
+      for (const file of files) {
+        try {
+          selectedImages.push(await optimizeImage(file));
+        } catch (error) {
+          console.warn("No se pudo procesar la imagen.", error);
+          showAlert("Una imagen no se pudo procesar. Intenta con otro archivo.");
+        }
+      }
+
+      imageInput.value = "";
+      renderPreview();
+    });
   }
 
-  feedback.textContent = message;
-  feedback.className = message ? `form-feedback is-${type}` : "form-feedback";
-};
-
-const updateFileSummary = () => {
-  if (!fileSummary || !fileInput) {
-    return;
-  }
-
-  const files = Array.from(fileInput.files);
-
-  if (files.length === 0) {
-    fileSummary.textContent = "Sin imagenes seleccionadas.";
-    return;
-  }
-
-  if (files.length === 1) {
-    fileSummary.textContent = `1 imagen seleccionada: ${files[0].name}`;
-    return;
-  }
-
-  fileSummary.textContent = `${files.length} imagenes seleccionadas.`;
-};
-
-if (fileInput) {
-  fileInput.addEventListener("change", updateFileSummary);
-}
-
-if (form) {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    clearAlert();
 
     if (!form.checkValidity()) {
       form.reportValidity();
-      setFeedback("Completa los campos requeridos antes de guardar.", "error");
+      showAlert("Completa todos los campos obligatorios antes de guardar.");
       return;
     }
 
-    const storageKey = form.dataset.storageKey || "autoreg.vehiculos";
-    const formData = new FormData(form);
-    const vehicleRecord = buildVehicleRecord(formData, storageKey);
-    const vehicles = getStoredVehicles(storageKey);
-    const alreadyExists = vehicles.some(
-      (vehicle) => vehicle?.vehiculo?.placa === vehicleRecord.vehiculo.placa
-    );
-
-    if (alreadyExists) {
-      setFeedback(`Ya existe un vehiculo con la placa ${vehicleRecord.vehiculo.placa}.`, "error");
+    if (typeof guardarVehiculo !== "function") {
+      showAlert("No se encontr\u00f3 el m\u00f3dulo de guardado.");
       return;
     }
 
-    vehicles.push(vehicleRecord);
+    const anio = Number.parseInt(getValue("anio"), 10);
+    const currentYear = new Date().getFullYear();
+
+    if (Number.isNaN(anio) || anio < 1900 || anio > currentYear + 1) {
+      showAlert(`A\u00f1o inv\u00e1lido. Ingresa un a\u00f1o entre 1900 y ${currentYear + 1}.`);
+      return;
+    }
+
+    const vehicle = {
+      id: idField.value || null,
+      placa: normalizePlate(getValue("placa")),
+      marca: getValue("marca"),
+      modelo: getValue("modelo"),
+      anio,
+      color: getValue("color"),
+      tipo: getValue("tipo"),
+      propietario: getValue("propietario"),
+      documento: getValue("documento"),
+      telefono: `${getValue("phonePrefix")} ${getValue("telefonoNumber")}`.trim(),
+      correo: getValue("correo"),
+      estado: getValue("estado"),
+      categoria: getValue("categoria"),
+      poliza: getValue("poliza"),
+      revision: getValue("revision"),
+      observaciones: getValue("observaciones"),
+      fechaRegistro: currentVehicle?.fechaRegistro || new Date().toISOString(),
+      images: keptExistingImages().concat(selectedImages)
+    };
 
     try {
-      saveStoredVehicles(storageKey, vehicles);
+      const saved = guardarVehiculo(vehicle);
+      showAlert(`Veh\u00edculo ${saved.placa} guardado correctamente.`, "success");
+      window.setTimeout(() => {
+        window.location.href = "vehiculos.html";
+      }, 700);
     } catch (error) {
-      console.error("No se pudo guardar el vehiculo en localStorage.", error);
-      setFeedback("No se pudo guardar. Revisa el espacio disponible del navegador.", "error");
-      return;
+      console.error("Error al guardar el vehiculo:", error);
+      showAlert(error?.message || "Ocurri\u00f3 un error al guardar el veh\u00edculo.");
     }
-
-    form.reset();
-    window.setTimeout(() => {
-      updateFileSummary();
-      setFeedback(`Vehiculo ${vehicleRecord.vehiculo.placa} guardado. Total local: ${vehicles.length}.`);
-    }, 0);
   });
 
   form.addEventListener("reset", () => {
     window.setTimeout(() => {
-      updateFileSummary();
-      setFeedback("");
+      clearAlert();
+      currentVehicle = null;
+      selectedImages = [];
+      existingImages = [];
+      removedExisting.clear();
+      renderPreview();
     }, 0);
   });
-}
-﻿// assets/js/registro.js
-// Manejo de formulario de registro/edición usando app.js
 
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('vehiculoForm');
-  const titulo = document.getElementById('formTitle');
-  const idField = document.getElementById('vehiculoId');
-  const alertBox = document.getElementById('registro-alert');
-
-  if (!form || !titulo || !idField || !alertBox) return;
-
-  // image management state
-  let selectedImages = []; // data URLs for newly selected files
-  let existingImages = []; // data URLs loaded from vehicle when editing
-  const removedExisting = new Set();
-
-  const imagenesInput = document.getElementById('imagenesInput');
-  const imagenesPreview = document.getElementById('imagenesPreview');
-
-  function mostrarAlerta(message, variant = 'error') {
-    alertBox.textContent = message;
-    alertBox.className = `form-alert ${variant === 'success' ? 'alert-success' : 'alert-error'}`;
-  }
-
-  function limpiarAlerta() {
-    alertBox.textContent = '';
-    alertBox.className = 'form-alert';
-  }
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const editId = urlParams.get('id');
-
-  function renderPreview() {
-    if (!imagenesPreview) return;
-    imagenesPreview.innerHTML = '';
-
-    // existing images first
-    existingImages.forEach((src, idx) => {
-      if (removedExisting.has(src)) return;
-      const wrap = document.createElement('div');
-      wrap.style.position = 'relative';
-      wrap.style.display = 'inline-block';
-      wrap.style.marginRight = '8px';
-
-      const img = document.createElement('img');
-      img.src = src;
-      img.style.width = '96px';
-      img.style.height = '64px';
-      img.style.objectFit = 'cover';
-      img.style.borderRadius = '8px';
-      wrap.appendChild(img);
-
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = '✖';
-      btn.title = 'Eliminar imagen';
-      btn.style.position = 'absolute';
-      btn.style.top = '4px';
-      btn.style.right = '4px';
-      btn.style.background = 'rgba(0,0,0,0.6)';
-      btn.style.color = '#fff';
-      btn.style.border = 'none';
-      btn.style.borderRadius = '50%';
-      btn.style.width = '22px';
-      btn.style.height = '22px';
-      btn.style.cursor = 'pointer';
-      btn.addEventListener('click', () => {
-        removedExisting.add(src);
-        renderPreview();
-      });
-      wrap.appendChild(btn);
-      imagenesPreview.appendChild(wrap);
-    });
-
-    // newly selected images
-    selectedImages.forEach((dataUrl, idx) => {
-      const wrap = document.createElement('div');
-      wrap.style.position = 'relative';
-      wrap.style.display = 'inline-block';
-      wrap.style.marginRight = '8px';
-
-      const img = document.createElement('img');
-      img.src = dataUrl;
-      img.style.width = '96px';
-      img.style.height = '64px';
-      img.style.objectFit = 'cover';
-      img.style.borderRadius = '8px';
-      wrap.appendChild(img);
-
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = '✖';
-      btn.title = 'Eliminar imagen';
-      btn.style.position = 'absolute';
-      btn.style.top = '4px';
-      btn.style.right = '4px';
-      btn.style.background = 'rgba(0,0,0,0.6)';
-      btn.style.color = '#fff';
-      btn.style.border = 'none';
-      btn.style.borderRadius = '50%';
-      btn.style.width = '22px';
-      btn.style.height = '22px';
-      btn.style.cursor = 'pointer';
-      btn.addEventListener('click', () => {
-        selectedImages.splice(idx, 1);
-        renderPreview();
-      });
-      wrap.appendChild(btn);
-      imagenesPreview.appendChild(wrap);
-    });
-  }
-
-  if (editId) {
-    titulo.textContent = 'Editar vehículo';
-    try {
-      const vehiculo = getVehiculoById(editId);
-      if (!vehiculo) {
-        mostrarAlerta('No se encontró el vehículo a editar. Puedes crear uno nuevo.', 'error');
-      } else {
-        idField.value = vehiculo.id;
-        document.getElementById('placa').value = vehiculo.placa || '';
-        document.getElementById('marca').value = vehiculo.marca || '';
-        document.getElementById('modelo').value = vehiculo.modelo || '';
-        document.getElementById('anio').value = vehiculo.anio || '';
-        document.getElementById('color').value = vehiculo.color || '';
-        document.getElementById('tipo').value = vehiculo.tipo || 'Automovil';
-        document.getElementById('propietario').value = vehiculo.propietario || '';
-        document.getElementById('documento').value = vehiculo.documento || '';
-        // split telefono into prefix and number when possible
-        if (vehiculo.telefono) {
-          const parts = String(vehiculo.telefono).split(/\s+/, 2);
-          const prefix = parts[0] && parts[0].startsWith('+') ? parts[0] : '+503';
-          const number = parts.slice(1).join(' ') || parts[1] || '';
-          const prefixEl = document.getElementById('phonePrefix');
-          const numberEl = document.getElementById('telefonoNumber');
-          if (prefixEl) prefixEl.value = prefix;
-          if (numberEl) numberEl.value = number || vehiculo.telefono;
-        }
-        document.getElementById('correo').value = vehiculo.correo || '';
-        document.getElementById('estado').value = vehiculo.estado || 'Pendiente';
-        document.getElementById('categoria').value = vehiculo.categoria || 'Particular';
-        document.getElementById('poliza').value = vehiculo.poliza || '';
-        document.getElementById('revision').value = vehiculo.revision || '';
-        document.getElementById('observaciones').value = vehiculo.observaciones || '';
-
-        // prepare existing images
-        existingImages = Array.isArray(vehiculo.images) ? vehiculo.images.slice() : [];
-        renderPreview();
-      }
-    } catch (error) {
-      console.error('Error cargando vehículo:', error);
-      mostrarAlerta('Ocurrió un error al cargar los datos del vehículo.', 'error');
-    }
-  }
-
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    limpiarAlerta();
-
-    const placa = document.getElementById('placa').value.trim();
-    const marca = document.getElementById('marca').value.trim();
-    const modelo = document.getElementById('modelo').value.trim();
-    const anio = document.getElementById('anio').value.trim();
-    const propietario = document.getElementById('propietario').value.trim();
-    const estado = document.getElementById('estado').value;
-    const documento = document.getElementById('documento').value.trim();
-    const phonePrefix = document.getElementById('phonePrefix') ? document.getElementById('phonePrefix').value.trim() : '';
-    const telefonoNumber = document.getElementById('telefonoNumber') ? document.getElementById('telefonoNumber').value.trim() : '';
-    const correo = document.getElementById('correo').value.trim();
-    const poliza = document.getElementById('poliza').value.trim();
-    const revision = document.getElementById('revision').value.trim();
-    const observaciones = document.getElementById('observaciones').value.trim();
-
-    // Validar que todos los campos esten completos
-    if (!placa || !marca || !modelo || !anio || !propietario || !documento || !phonePrefix || !telefonoNumber || !correo || !poliza || !revision) {
-      mostrarAlerta('Completa todos los campos obligatorios antes de guardar.', 'error');
-      return;
-    }
-
-    const anioNum = parseInt(anio, 10);
-    const currentYear = new Date().getFullYear();
-    if (isNaN(anioNum) || anioNum < 1900 || anioNum > currentYear + 1) {
-      mostrarAlerta(`Año inválido. Ingrese un año entre 1900 y ${currentYear + 1}.`, 'error');
-      return;
-    }
-
-    const vehiculo = {
-      id: idField.value ? parseInt(idField.value, 10) : null,
-      placa,
-      marca,
-      modelo,
-      anio: anioNum,
-      color: document.getElementById('color').value.trim(),
-      tipo: document.getElementById('tipo').value,
-      propietario,
-      documento: document.getElementById('documento').value.trim(),
-      telefono: `${phonePrefix} ${telefonoNumber}`,
-      correo: correo,
-      estado,
-      categoria: document.getElementById('categoria').value,
-      poliza: document.getElementById('poliza').value.trim(),
-      revision: document.getElementById('revision').value.trim(),
-      observaciones: document.getElementById('observaciones').value.trim(),
-      fechaRegistro: new Date().toISOString(),
-      images: []
-    };
-
-    // build final images array: existing (except removed) + newly selected
-    const keptExisting = existingImages.filter(src => !removedExisting.has(src));
-    const newImages = selectedImages.slice();
-    const finalImages = keptExisting.concat(newImages);
-
-    if (finalImages.length === 0) {
-      // allow saving without images for debugging, but ask confirmation
-      const saveWithoutImages = confirm('No ha adjuntado imágenes. ¿Desea guardar el registro de todos modos?');
-      if (!saveWithoutImages) {
-        mostrarAlerta('Adjunta al menos una imagen del vehículo o confirma guardar sin imágenes.', 'error');
-        return;
-      }
-    }
-
-    vehiculo.images = finalImages;
-
-    try {
-      console.log('[autoreg] registro submit - saving vehiculo:', vehiculo);
-      const saved = guardarVehiculo(vehiculo);
-      console.log('[autoreg] registro saved:', saved);
-      mostrarAlerta('Vehículo guardado correctamente.', 'success');
-      setTimeout(() => window.location.href = 'vehiculos.html', 700);
-    } catch (error) {
-      console.error('[autoreg] Error al guardar:', error);
-      mostrarAlerta(`Ocurrió un error al guardar el vehículo. ${error?.message || 'Intenta nuevamente.'}`, 'error');
-    }
-  });
-
-  form.addEventListener('reset', () => {
-    limpiarAlerta();
-    selectedImages = [];
-    existingImages = [];
-    removedExisting.clear();
-    if (imagenesPreview) imagenesPreview.innerHTML = '';
-  });
-
-  // preview de imágenes al seleccionar (append mode)
-  if (imagenesInput) {
-    imagenesInput.addEventListener('change', async () => {
-      const files = Array.from(imagenesInput.files || []).slice(0, 8 - selectedImages.length);
-      for (const file of files) {
-        try {
-          // resize before storing to keep localStorage reasonable; force JPEG output
-          const resized = await resizeImage(file, 1200, 800, 0.75);
-          if (resized) selectedImages.push(resized);
-        } catch (err) {
-          console.warn('No se pudo redimensionar imagen, usando original', err);
-          // fallback to original data URL
-          const fr = await new Promise((res, rej) => {
-            const r = new FileReader();
-            r.onload = () => res(r.result);
-            r.onerror = () => rej(new Error('Error leyendo archivo'));
-            r.readAsDataURL(file);
-          });
-          if (fr) selectedImages.push(fr);
-        }
-        renderPreview();
-      }
-      // clear native file input so same file can be reselected if needed
-      imagenesInput.value = '';
-    });
-  }
-
-  // initialize preview
+  loadVehicleForEdit();
   renderPreview();
 });
