@@ -12,6 +12,12 @@ function isLocalStorageAvailable() {
   }
 }
 
+function forceRefreshDashboard() {
+  actualizarDashboard();
+  renderUltimosRegistros();
+  renderWeeklyTrend();
+}
+
 function actualizarDashboard() {
   const vehiculos = typeof getVehiculos === 'function' ? getVehiculos() : [];
   const totalRegistrosEl = document.getElementById('totalRegistros');
@@ -192,7 +198,7 @@ function cargarDatosDemo() {
     saveVehiculos(datosDemo);
     console.log('[autoreg] Datos de demostración cargados');
     forceRefreshDashboard();
-    showToast('Datos de demostración cargados. El dashboard ahora muestra la visión general del sistema.', 5000);
+    showToast('Datos de desmostración cargados correctamente', 5000);
   } catch (err) {
     console.error('[autoreg] Error al cargar datos demo:', err);
     showToast('Error al cargar datos de demostración', 3000);
