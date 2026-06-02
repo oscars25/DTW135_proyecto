@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estados | Registro de vehículos</title>
+  <meta name="description" content="Vista de estados de vehiculos con indicadores de aprobacion, revision y alertas.">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    /* Estilos específicos para la cuadrícula de estados */
+    .status-grid { display: flex; gap: 1rem; flex-wrap: wrap; margin: 2rem 0; }
+    .status-card { flex: 1; min-width: 180px; padding: 1.5rem; border-radius: 1rem; background: #f8f9fa; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .status-pill { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+    .status-total .status-pill { background: #6c757d; color: white; }
+    .status-approved .status-pill { background: #28a745; color: white; }
+    .status-review .status-pill { background: #ffc107; color: #212529; }
+    .status-warning .status-pill { background: #fd7e14; color: white; }
+    .status-card strong { display: block; font-size: 2.5rem; margin: 0.5rem 0; }
+    .process-steps { display: flex; gap: 1rem; margin-top: 1rem; }
+    .process-steps > div { flex: 1; padding: 1rem; background: #e9ecef; border-radius: 0.75rem; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="utility-bar">
+      <div class="user-nav">
+        <a href="account.html">Cuenta</a>
+        <a href="#" data-logout="true">Cerrar sesion</a>
+      </div>
+    </div>
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
+    <header class="site-header compact">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">RV</span>
+        <span>
+          <strong>Registro de vehículos</strong>
+          <small>Gestor de registros vehiculares</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navegacion principal">
+        <a href="../index.html">Inicio</a>
+        <a href="registro.html">Registrar vehiculo</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="vehiculos.html">Vehiculos</a>
+        <a href="estados.html" class="active">Estados</a>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <section class="page-intro">
+        <span class="eyebrow">Estados operativos</span>
+        <h1>Panel dedicado a mostrar el ciclo de vida de cada vehiculo registrado.</h1>
+        <p id="estadoTotalText">Cargando información del sistema...</p>
+      </section>
+
+      <section class="status-grid">
+        <article class="card status-card status-total">
+          <span class="status-pill">Total</span>
+          <strong id="estadoTotal">0</strong>
+          <p>Registros totales guardados en el sistema.</p>
+        </article>
+        <article class="card status-card status-approved">
+          <span class="status-pill">Aprobado</span>
+          <strong id="estadoAprobado">0</strong>
+          <p>Vehículos habilitados para operación.</p>
+        </article>
+        <article class="card status-card status-review">
+          <span class="status-pill">En revision</span>
+          <strong id="estadoRevision">0</strong>
+          <p>Registros pendientes de validación.</p>
+        </article>
+        <article class="card status-card status-warning">
+          <span class="status-pill">Observado</span>
+          <strong id="estadoObservado">0</strong>
+          <p>Casos que requieren corrección.</p>
+        </article>
+      </section>
+
+      <section class="card process-card">
+        <div class="section-head">
+          <h2>Secuencia de control</h2>
+          <span class="status-pill status-online">Flujo base</span>
+        </div>
+        <div class="process-steps">
+          <div><strong>Recepcion</strong><p>Se captura la informacion inicial del vehiculo.</p></div>
+          <div><strong>Revision</strong><p>Se valida documentacion y coincidencia de datos.</p></div>
+          <div><strong>Aprobacion</strong><p>El vehiculo queda listo para operar o listar.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/estados.js"></script>
+</body>
+</html>

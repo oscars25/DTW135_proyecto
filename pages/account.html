@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuenta | Registro de vehículos</title>
+  <meta name="description" content="Configuración de cuenta, gestión de usuarios registrados y cambio de contraseña.">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    /* Estilos adicionales para la tabla de usuarios */
+    .users-table-container {
+      overflow-x: auto;
+      margin-top: 2rem;
+    }
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .users-table th, .users-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .users-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+    .users-table tr:hover {
+      background-color: #f1f3f5;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .btn-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      transition: background 0.2s;
+    }
+    .btn-edit {
+      color: #0d6efd;
+    }
+    .btn-edit:hover {
+      background-color: #e7f1ff;
+    }
+    .btn-delete {
+      color: #dc3545;
+    }
+    .btn-delete:hover {
+      background-color: #ffe7e9;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-content h3 {
+      margin-top: 0;
+    }
+    .modal-content label {
+      display: block;
+      margin: 0.75rem 0 0.25rem;
+      font-weight: 500;
+    }
+    .modal-content input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .card + .card {
+      margin-top: 2rem;
+    }
+    .user-count {
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="dashboard-page">
+  <div class="page-shell">
+    <div class="utility-bar">
+      <div class="user-nav">
+        <a href="account.html" class="active">Cuenta</a>
+        <a href="#" data-logout="true">Cerrar sesion</a>
+      </div>
+    </div>
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
+    <header class="site-header compact">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">RV</span>
+        <span>
+          <strong>Registro de vehículos</strong>
+          <small>Gestión de cuenta</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Navegacion principal">
+        <a href="../index.html">Inicio</a>
+        <a href="registro.html">Registrar vehiculo</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="vehiculos.html">Vehiculos</a>
+        <a href="estados.html">Estados</a>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <section class="page-intro">
+        <span class="eyebrow">Mi cuenta</span>
+        <h1>Administración de usuarios y contraseña</h1>
+        <p>Cambia tu contraseña o edita/elimina usuarios registrados en el sistema.</p>
+      </section>
+
+      <!-- Cambio de contraseña -->
+      <section class="card form-card" style="max-width:560px; margin:0 auto 2rem auto;">
+        <div class="form-section">
+          <h2>Datos de usuario</h2>
+          <div class="form-grid">
+            <label>
+              Nombre
+              <input id="accountName" type="text" readonly>
+            </label>
+            <label>
+              Correo electrónico
+              <input id="accountEmail" type="email" readonly>
+            </label>
+          </div>
+        </div>
+
+        <form id="accountPasswordForm" class="form-section" novalidate>
+          <label>
+            Contraseña actual
+            <input id="currentPassword" type="password" placeholder="Contraseña actual" autocomplete="current-password" required>
+          </label>
+
+          <label>
+            Nueva contraseña
+            <input id="newPassword" type="password" placeholder="Nueva contraseña" autocomplete="new-password" required>
+          </label>
+
+          <label>
+            Confirmar nueva contraseña
+            <input id="confirmNewPassword" type="password" placeholder="Repite la nueva contraseña" autocomplete="new-password" required>
+          </label>
+
+          <div id="accountAlert" class="form-alert" aria-live="polite"></div>
+
+          <div class="form-actions">
+            <button type="button" class="button button-secondary" onclick="window.location.href='dashboard.html'">Volver al dashboard</button>
+            <button type="submit" class="button button-primary">Actualizar contraseña</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Gestión de usuarios registrados -->
+      <section class="card form-card">
+        <div class="form-section">
+          <h2>👥 Usuarios registrados en el sistema</h2>
+          <p class="user-count" id="userCountText">Cargando usuarios...</p>
+          <div class="users-table-container">
+            <table class="users-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Correo electrónico</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr><td colspan="4">No hay usuarios registrados</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal para editar usuario -->
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <h3>Editar usuario</h3>
+      <input type="hidden" id="editUserId">
+      <label>Nombre completo</label>
+      <input type="text" id="editUserName" placeholder="Nombre">
+      <label>Correo electrónico</label>
+      <input type="email" id="editUserEmail" placeholder="correo@ejemplo.com">
+      <label>Nueva contraseña (dejar vacío si no se cambia)</label>
+      <input type="password" id="editUserPassword" placeholder="Nueva contraseña">
+      <div class="modal-actions">
+        <button type="button" class="button button-secondary" id="closeModalBtn">Cancelar</button>
+        <button type="button" class="button button-primary" id="saveUserEditBtn">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/account.js"></script>
+</body>
+</html>

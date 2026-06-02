@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar contraseña | Registro de vehículos</title>
+  <meta name="description" content="Restablece tu contraseña mediante correo electrónico.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #1e1e2a;
+    }
+    .brand-mark {
+      background: #9f6b3f;
+      color: white;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrapper input {
+      flex: 1;
+      padding-right: 2.5rem;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .reset-container, .request-container {
+      transition: all 0.2s;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body class="login-page">
+  <div class="page-shell login-shell">
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
+
+    <main class="login-main">
+      <section class="card login-card" style="max-width: 480px;">
+        <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+          <a class="brand" href="login.html" style="justify-content: center;">
+            <span class="brand-mark">RV</span>
+            <span>
+              <strong>Registro de vehículos</strong>
+              <small>Recuperar acceso</small>
+            </span>
+          </a>
+        </div>
+
+        <!-- Paso 1: solicitar correo -->
+        <div id="requestContainer" class="request-container">
+          <h1>¿Olvidaste tu contraseña?</h1>
+          <p>Ingresa tu correo y te enviaremos un enlace para restablecerla.</p>
+
+          <form id="recoverRequestForm">
+            <label>
+              Correo electrónico
+              <input type="email" id="recoveryEmail" placeholder="correo@dominio.com" required>
+            </label>
+            <div id="requestAlert" class="form-alert"></div>
+            <div class="form-actions" style="margin-top: 1.5rem;">
+              <button type="button" class="button button-secondary" onclick="window.location.href='login.html'">Volver al inicio</button>
+              <button type="submit" class="button button-primary">Enviar enlace</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Paso 2: restablecer contraseña -->
+        <div id="resetContainer" class="reset-container hidden">
+          <h1>Restablecer contraseña</h1>
+          <p>Ingresa tu nueva contraseña.</p>
+
+          <form id="resetPasswordForm">
+            <label>
+              Nueva contraseña
+              <div class="password-wrapper">
+                <input type="password" id="newPassword" required>
+                <button type="button" class="toggle-password" data-target="newPassword">👁️</button>
+              </div>
+            </label>
+            <label>
+              Confirmar contraseña
+              <div class="password-wrapper">
+                <input type="password" id="confirmPassword" required>
+                <button type="button" class="toggle-password" data-target="confirmPassword">👁️</button>
+              </div>
+            </label>
+            <div id="resetAlert" class="form-alert"></div>
+            <div class="form-actions" style="margin-top: 1.5rem;">
+              <button type="button" class="button button-secondary" onclick="window.location.href='login.html'">Cancelar</button>
+              <button type="submit" class="button button-primary">Actualizar contraseña</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="login-footer">
+          <p>¿Ya recuerdas la contraseña? <a href="login.html">Iniciar sesión</a></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/recover.js"></script>
+</body>
+</html>

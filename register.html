@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarme | Registro de vehículos</title>
+  <meta name="description" content="Crear una cuenta para iniciar sesión en el sistema de registro de vehículos.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="login-page">
+  <div class="page-shell login-shell">
+    <div class="top-banner">
+      <div class="top-banner__marquee">
+        <span>Registro de vehículos</span>
+        <span>Registro de vehículos</span>
+      </div>
+    </div>
+
+    <main class="login-main">
+      <section class="card login-card">
+        <a class="brand login-brand" href="login.html">
+          <span class="brand-mark">RV</span>
+          <span>
+            <strong>Registro de vehículos</strong>
+            <small>Crear una nueva cuenta</small>
+          </span>
+        </a>
+
+        <div class="login-copy">
+          <h1>Registrarme</h1>
+          <p>Ingresa tu nombre, correo y contraseña para crear una cuenta válida.</p>
+        </div>
+
+        <form id="registerForm" class="login-form" novalidate>
+          <label>
+            Nombre completo
+            <input id="registerName" type="text" placeholder="Tu nombre completo" autocomplete="name" required>
+          </label>
+
+          <label>
+            Correo electrónico
+            <input id="registerEmail" type="email" placeholder="correo@dominio.com" autocomplete="email" required>
+          </label>
+
+          <label>
+            Contraseña
+            <input id="registerPassword" type="password" placeholder="Crea una contraseña" autocomplete="new-password" required>
+          </label>
+
+          <label>
+            Confirmar contraseña
+            <input id="registerPasswordConfirm" type="password" placeholder="Repite la contraseña" autocomplete="new-password" required>
+          </label>
+
+          <div id="registerAlert" class="form-alert" aria-live="polite"></div>
+
+          <button class="button button-primary" type="submit">Crear cuenta</button>
+        </form>
+
+        <div class="login-footer">
+          <p>¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/register.js"></script>
+</body>
+</html>
